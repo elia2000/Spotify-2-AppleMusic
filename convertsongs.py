@@ -21,28 +21,29 @@ def get_connection_data(f,prompt):
     else:
             return input(prompt)
 
-def create_apple_music_playlist(session, playlist_name):
-    url = "https://amp-api.music.apple.com/v1/me/library/playlists"
-    data = {
-        'attributes': {
-            'name': playlist_name,
-            'description': 'A new playlist created via API'
-        }
-    }
-    # test if playlist exists and create it if not
-    response = session.get(url)
-    if response.status_code == 200:
-        for playlist in response.json()['data']:
-            if playlist['attributes']['name'] == playlist_name:
-                print(f"Playlist {playlist_name} already exists!")
-                return playlist['id']
-    response = session.post(url, json=data)
-    if response.status_code == 201:
-        sleep(1.5)
-        return response.json()['data'][0]['id']
-    else:
-        raise Exception(f"Error {response.status_code} while creating playlist {playlist_name}!")
-        return None
+# def create_apple_music_playlist(session, playlist_name):
+#     url = "https://amp-api.music.apple.com/v1/me/library/playlists"
+#     data = {
+#         'attributes': {
+#             'name': playlist_name,
+#             'description': 'A new playlist created via API'
+#         }
+#     }
+#     # test if playlist exists and create it if not
+#     response = session.get(url)
+#     if response.status_code == 200:
+#         for playlist in response.json()['data']:
+#             if playlist['attributes']['name'] == playlist_name:
+#                 print(f"Playlist {playlist_name} already exists!")
+#                 print(f'ine:\n{playlist['id']}')
+#                 return playlist['id']
+#     response = session.post(url, json=data)
+#     if response.status_code == 201:
+#         sleep(1.5)
+#         return response.json()['data'][0]['id']
+#     else:
+#         raise Exception(f"Error {response.status_code} while creating playlist {playlist_name}!")
+#         return None
     
 # Getting user's data for the connection
 token = get_connection_data("token.dat", "\nPlease enter your Apple Music Authorization (Bearer token):\n")
@@ -57,7 +58,7 @@ def escape_apostrophes(s):
 
 # Function to get the iTunes ID of a song
 def get_itunes_id(title, artist, album):
-    BASE_URL = "https://itunes.apple.com/search?country=FR&media=music&entity=song&limit=5&term="
+    BASE_URL = "https://itunes.apple.com/search?country=US&media=music&entity=song&limit=5&term="
     # Search the iTunes catalog for a song
     try:
         # Search for the title + artist + album
@@ -124,36 +125,39 @@ def get_itunes_id(title, artist, album):
         return None
 
 # Function to add a song to a playlist
-def add_song_to_playlist(session, song_id, playlist_id, playlist_name):
+def add_song_to_playlist(session, song_id, playlist_name):
     try:   
-        request = session.post(f"https://amp-api.music.apple.com/v1/me/library/playlists/{playlist_id}/tracks", json={"data":[{"id":f"{song_id}","type":"songs"}]})
+        request = session.post(f"https://amp-api.music.apple.com/v1/me/library?art%5Burl%5D=f&format%5Bresources%5D=map&ids%5Bsongs%5D={song_id}&representation=ids", json={"data":[{"id":f"{song_id}","type":"songs"}]})
         # Checking if the request is successful
         if requests.codes.ok:
-            print(f"Song {song_id} added to playlist {playlist_name}!")
+            print(f"Song {song_id} added to Liberary!")
             return True
         # If not, print the error code
         else: 
-            print(f"Error {request.status_code} while adding song {song_id} to playlist {playlist_name}!")
+            print(f"Error {request.status_code} while adding song {song_id} to your Liberary!")
             return False
     except:
-        print(f"HOST ERROR: Apple Music might have blocked the connection during the add of {song_id} to playlist {playlist_name}!\nPlease wait a few minutes and try again.\nIf the problem persists, please contact the developer.")
+        print(f"HOST ERROR: Apple Music might have blocked the connection during the add of {song_id} to Liberary!\nPlease wait a few minutes and try again.\nIf the problem persists, please contact the developer.")
         return False
 
-def get_playlist_track_ids(session, playlist_id):
-    # test if song is already in playlist
-    try:
-        response = session.get(f"https://amp-api.music.apple.com/v1/me/library/playlists/{playlist_id}/tracks")
-        if response.status_code == 200:
-            #print(response.json()['data'])
-            return [track['attributes']['playParams']['catalogId'] for track in response.json()['data']]
-        elif response.status_code == 404:
-            return []
-        else:
-            raise Exception(f"Error {response.status_code} while getting playlist {playlist_id}!")
-            return None
-    except:
-        raise Exception(f"Error while getting playlist {playlist_id}!")
-        return None
+
+
+# def get_playlist_track_ids(session, playlist_id):
+#     # test if song is already in playlist
+#     try:
+#         response = session.get(f"https://amp-api.music.apple.com/v1/me/library/playlists/{playlist_id}/tracks")
+#         if response.status_code == 200:
+#             #print(response.json()['data'])
+#             return [track['attributes']['playParams']['catalogId'] for track in response.json()['data']]
+#         elif response.status_code == 404:
+#             return []
+#         else:
+#             raise Exception(f"Error {response.status_code} while getting playlist {playlist_id}!")
+#             return None
+#     except:
+#         raise Exception(f"Error while getting playlist {playlist_id}!")
+#         return None
+    
 # Opening session
 def create_playlist_and_add_song(file):
     with requests.Session() as s:
@@ -177,10 +181,10 @@ def create_playlist_and_add_song(file):
     playlist_name = playlist_name[0]
     playlist_name = playlist_name.replace('_', ' ')
 
-    playlist_identifier = create_apple_music_playlist(s, playlist_name)
+    # playlist_identifier = create_apple_music_playlist(s, playlist_name)
 
-    playlist_track_ids = get_playlist_track_ids(s, playlist_identifier)
-    print(playlist_track_ids)
+    # playlist_track_ids = get_playlist_track_ids(s, playlist_identifier)
+    # print(playlist_track_ids)
     # Opening the inputed CSV file
     with open(str(file), encoding='utf-8') as file:
         file = csv.reader(file)
@@ -198,14 +202,14 @@ def create_playlist_and_add_song(file):
             track_id = get_itunes_id(title, artist, album)
             # If the song is found, add it to the playlist
             if track_id:
-                if str(track_id) in playlist_track_ids:
-                    print(f'\nN°{n} | {title} | {artist} | {album} => {track_id}')
-                    print(f"Song {track_id} already in playlist {playlist_name}!")
-                    failed += 1
-                    continue
+                # if str(track_id) in playlist_track_ids:
+                #     print(f'\nN°{n} | {title} | {artist} | {album} => {track_id}')
+                #     print(f"Song {track_id} already in playlist {playlist_name}!")
+                #     failed += 1
+                #     continue
                 print(f'\nN°{n} | {title} | {artist} | {album} => {track_id}')
                 sleep(0.5)
-                if add_song_to_playlist(s, track_id, playlist_identifier, playlist_name):
+                if add_song_to_playlist(s, track_id, playlist_name):
                     converted += 1
                 else:
                     failed += 1
@@ -234,6 +238,6 @@ if __name__ == "__main__":
                 if ".csv" in file:
                     create_playlist_and_add_song(os.path.join(argv[1], file))
 
-# Developped by @therealmarius on GitHub
+# Forked by @elia2000 on GitHub
 # Based on the work of @simonschellaert on GitHub
 # Github project page: https://github.com/therealmarius/Spotify-2-AppleMusic
