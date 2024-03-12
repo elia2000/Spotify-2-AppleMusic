@@ -1,4 +1,4 @@
-# Spotify to Apple Music -> Directly to Library
+# Spotify to Apple Music -> Directly to Favorite Songs
 ## Forked by [@elia2000](https://github.com/elia2000/Spotify-2-AppleMusic)
 ## Based on the work of [@simonschellaert](https://github.com/simonschellaert/spotify2am)
 

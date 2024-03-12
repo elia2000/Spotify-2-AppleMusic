@@ -127,17 +127,18 @@ def get_itunes_id(title, artist, album):
 # Function to add a song to a playlist
 def add_song_to_playlist(session, song_id, playlist_name):
     try:   
-        request = session.post(f"https://amp-api.music.apple.com/v1/me/library?art%5Burl%5D=f&format%5Bresources%5D=map&ids%5Bsongs%5D={song_id}&representation=ids", json={"data":[{"id":f"{song_id}","type":"songs"}]})
+
+        request = session.post(f"https://amp-api.music.apple.com/v1/me/favorites?art%5Burl%5D=f&ids%5Bsongs%5D={song_id}&l=en-US&platform=web", json={"data":[{"id":f"{song_id}","type":"songs"}]})
         # Checking if the request is successful
         if requests.codes.ok:
-            print(f"Song {song_id} added to Liberary!")
+            print(f"Song {song_id} added to *Favorite Songs* :)")
             return True
         # If not, print the error code
         else: 
-            print(f"Error {request.status_code} while adding song {song_id} to your Liberary!")
+            print(f"Error {request.status_code} while adding song {song_id} to *Favorite Songs* :( !")
             return False
     except:
-        print(f"HOST ERROR: Apple Music might have blocked the connection during the add of {song_id} to Liberary!\nPlease wait a few minutes and try again.\nIf the problem persists, please contact the developer.")
+        print(f"HOST ERROR: Apple Music might have blocked the connection during the add of {song_id} to  *Favorite Songs* :( !\nPlease wait a few minutes and try again.\nIf the problem persists, please contact the developer.")
         return False
 
 
