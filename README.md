@@ -1,6 +1,7 @@
-![Spotify2AppleMusicBannerV2](https://github.com/therealmarius/Spotify-2-AppleMusic/assets/70507259/67dff9c5-49a6-494d-9594-92b2663540ef)
-# Spotify to Apple Music
+# Spotify to Apple Music -> Directly to Library
+## Forked by [@elia2000](https://github.com/elia2000/Spotify-2-AppleMusic)
 ## Based on the work of [@simonschellaert](https://github.com/simonschellaert/spotify2am)
+
 Import your Spotify playlist to Apple Music **for free** using Python!
 
 ## Usage
@@ -30,8 +31,7 @@ or
 ```bash
 python3 convertsongs.py playlistdir 
 ```
-(Replace *yourplaylist.csv* by your own filename, the one you got from [Exportify](https://watsonbox.github.io/exportify/), or *playlistdir* by your own playlist directory name.)
-
+(Replace *yourplaylist.csv* by your own filename, the one you got from [Exportify](https://watsonbox.github.io/exportify/)).
 Follow the script prompt, and when asked, paste in each data. If your terminal have a paste character limit: please hardcode them OR put them into separate files named as following: `token.dat`, `media_user_token.dat` and `cookies.dat`.
 
 ## Limitations & Notes
